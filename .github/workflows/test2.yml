@@ -1,0 +1,11 @@
+name: santanbhai
+on:
+  workflow_dispatch:
+jobs:
+  buildjob:
+    runs-on: ubuntu-latest
+    steps:
+    -  name: runscript
+       run: echo "Hell Bhai Jaan"
+  
+  
