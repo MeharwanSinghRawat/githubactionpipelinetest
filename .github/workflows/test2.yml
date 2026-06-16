@@ -8,9 +8,12 @@ jobs:
   buildjob:
     runs-on: ubuntu-latest
     steps:
-    -  name: runscript
-       run: echo "Hell $Greetings Bhai Jaan"
-    - name: HashiCorp - Setup Terraform
-  uses: hashicorp/setup-terraform@v2.0.3
-
+    - name: Print Greeting Message
+  run: echo "Hello $Greetings Bhai Jaan"
+  
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+    
+    - name: Verify Terraform Installation
+      run: terraform version
   
