@@ -1,19 +1,24 @@
-name: santanbhai
+name: Terraform Workflow
+
 on:
   workflow_dispatch:
+
 env:
   Greetings: Namskaar
-  
+
 jobs:
   buildjob:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Print Greeting Message
-  run: echo "Hello $Greetings Bhai Jaan"
-  
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v3
-    
-    - name: Verify Terraform Installation
-      run: terraform version
-  
+      - name: Print Greeting Message
+        run: echo "Hello $Greetings Bhai Jaan"
+
+      # - name: Checkout Repository
+      #   uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Verify Terraform Installation
+        run: terraform version
