@@ -10,5 +10,7 @@ jobs:
     steps:
     -  name: runscript
        run: echo "Hell $Greetings Bhai Jaan"
-  
+    - name: HashiCorp - Setup Terraform
+  uses: hashicorp/setup-terraform@v2.0.3
+
   
