@@ -9,7 +9,9 @@ env:
 jobs:
   machine:
     runs-on: ubuntu-latest
+    env:
+      behafname: behaf of meharwan
 
     steps:
-      - name: Print Hello World
-        run: echo "${{ env.my_name }} Hello World from GitHub Actions!"
+    - name: Print Hello World
+      run: echo "${{ env.my_name }} Hello World ${{ env.behafname }}"
