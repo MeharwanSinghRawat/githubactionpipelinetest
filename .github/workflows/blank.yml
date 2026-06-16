@@ -4,10 +4,10 @@ on:
     branches:
       - main
 env:
-  my_name: Mehar
+  my_name: Welcome to
 
 jobs:
-  hello:
+  machine:
     runs-on: ubuntu-latest
 
     steps:
