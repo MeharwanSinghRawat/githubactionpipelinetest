@@ -14,4 +14,4 @@ jobs:
 
     steps:
     - name: Print Hello World
-      run: echo "${{ env.my_name }} Hello World ${{ env.behafname }}"
+      run: echo "$my_name $behafname"
