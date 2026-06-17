@@ -2,18 +2,20 @@ name: Terraform Workflow
 
 on:
   workflow_dispatch:
+
 jobs:
   installjob:
     runs-on: ubuntu-latest
 
     steps:
-          
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3   
+        uses: hashicorp/setup-terraform@v3
 
       - name: Verify Terraform Installation
         run: terraform version
-        working-directory: environments/dev
 
       - name: Terraform Init
         run: terraform init
