@@ -1,1 +1,9 @@
-test
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+
+# Variables
+
+*.tfvars.json
