@@ -2,7 +2,10 @@ name: Terraform Workflow
 
 on:
   workflow_dispatch:
-
+  
+permissions:
+  id-token: write
+  contents: read
 jobs:
   installjob:
     runs-on: ubuntu-latest
@@ -10,11 +13,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        
-      - name: Show Directory Structure
-        run: |
-          pwd
-          find .
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
