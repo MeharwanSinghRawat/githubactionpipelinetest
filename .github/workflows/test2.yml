@@ -1,24 +1,13 @@
 name: Terraform Workflow
 
 on:
-  push:
-    branches:
-    - dev
-    - main
-  pull_request:
-   branches:
-     - main
-env:
-  Greetings: Namskaar
-
+  workflow_dispatch:
 jobs:
   installjob:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Print Greeting Message
-        run: echo "Hello $Greetings Bhai Jaan"
-
+      
       - name: Checkout Repository
         uses: actions/checkout@v4        
 
