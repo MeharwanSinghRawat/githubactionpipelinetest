@@ -22,12 +22,16 @@ jobs:
 
       - name: Verify Terraform Installation
         run: terraform version
+        working-directory: environments/dev
 
       - name: Terraform Init
         run: terraform init
+        working-directory: environments/dev
 
       - name: Terraform Validate
         run: terraform validate
+        working-directory: environments/dev
 
       - name: Terraform Plan
         run: terraform plan
+        working-directory: environments/dev
