@@ -10,6 +10,11 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        
+      - name: Show Directory Structure
+        run: |
+          pwd
+          find .
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
