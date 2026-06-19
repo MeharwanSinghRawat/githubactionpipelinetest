@@ -11,6 +11,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7.0.0
+
+      - name: HashiCorp
+        uses: hashicorp/setup-terraform@v2.0.3
+
+      - name: check terraform version
+        run: terraform version
+        
       
       
        
