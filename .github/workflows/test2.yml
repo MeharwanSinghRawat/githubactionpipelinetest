@@ -1,116 +1,109 @@
 name: Terraform Infra Workflow
+
 on:
-  workflow_dispatch: 
+  workflow_dispatch:
 
 permissions:
-id-token: write
-contents: read
+  id-token: write
+  contents: read
 
 jobs:
 
-# --------------------------------------------------
+  # --------------------------------------------------
+  # Job 1 : Terraform Scanning
+  # --------------------------------------------------
 
-# Job 1 : Terraform Scanning
+  terraform-scanning:
+    name: Terraform Scanning
+    runs-on: ubuntu-latest
 
-# --------------------------------------------------
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-terraform-scanning:
-name: Terraform Scanning
-runs-on: ubuntu-latest
+      - name: Terraform Installation
+        uses: hashicorp/setup-terraform@v3
 
-steps:
-  - name: Checkout
-    uses: actions/checkout@v4
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
 
-  - name: Terraform Installation
-    uses: hashicorp/setup-terraform@v3
+      - name: Terraform Validate
+        working-directory: environments/dev
+        run: |
+          terraform init -backend=false
+          terraform validate
 
-  - name: Terraform Format Check
-    run: terraform fmt -check -recursive
+  # --------------------------------------------------
+  # Job 2 : Terraform Plan
+  # --------------------------------------------------
 
-  - name: Terraform Validate
-    run: |
-      terraform init -backend=false
-      terraform validate
-    working-directory: envirionments/dev
+  terraform-plan:
+    name: Terraform Plan
+    runs-on: ubuntu-latest
+    needs: terraform-scanning
 
-# --------------------------------------------------
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-# Job 2 : Terraform Plan
+      - name: Terraform Installation
+        uses: hashicorp/setup-terraform@v3
 
-# --------------------------------------------------
+      - name: Azure Login
+        uses: Azure/login@v3
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-terraform-plan:
-name: Terraform Plan
-runs-on: ubuntu-latest
-needs: terraform-scanning
+      - name: Terraform Init
+        working-directory: environments/dev
+        run: terraform init
 
-steps:
-  - name: Checkout
-    uses: actions/checkout@v4
+      - name: Terraform Plan
+        working-directory: environments/dev
+        run: terraform plan -out=tfplan
 
-  - name: Terraform Installation
-    uses: hashicorp/setup-terraform@v3
+      - name: Upload Plan Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: environments/dev/tfplan
 
-  - name: Azure Login
-    uses: Azure/login@v3
-    with:
-      client-id: ${{ secrets.AZURE_CLIENT_ID }}
-      tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-      subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  # --------------------------------------------------
+  # Job 3 : Terraform Apply
+  # --------------------------------------------------
 
-  - name: Terraform Init
-    run: terraform init
-    working-directory: envirionments/dev
+  terraform-apply:
+    name: Terraform Apply
+    runs-on: ubuntu-latest
+    needs: terraform-plan
+    environment: production
 
-  - name: Terraform Plan
-    run: terraform plan -out=tfplan
-    working-directory: envirionments/dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-  - name: Upload Plan Artifact
-    uses: actions/upload-artifact@v4
-    with:
-      name: tfplan
-      path: envirionments/dev/tfplan
+      - name: Terraform Installation
+        uses: hashicorp/setup-terraform@v3
 
+      - name: Azure Login
+        uses: Azure/login@v3
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-# --------------------------------------------------
+      - name: Download Plan Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+          path: environments/dev
 
-# Job 3 : Terraform Apply
+      - name: Terraform Init
+        working-directory: environments/dev
+        run: terraform init
 
-# --------------------------------------------------
-
-terraform-apply:
-name: Terraform Apply
-runs-on: ubuntu-latest
-needs: terraform-plan
-environment: production
-
-
-steps:
-  - name: Checkout
-    uses: actions/checkout@v4
-
-  - name: Terraform Installation
-    uses: hashicorp/setup-terraform@v3
-
-  - name: Azure Login
-    uses: Azure/login@v3
-    with:
-      client-id: ${{ secrets.AZURE_CLIENT_ID }}
-      tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-      subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-  - name: Download Plan Artifact
-    uses: actions/download-artifact@v4
-    with:
-      name: tfplan
-      path: envirionments/dev
-
-  - name: Terraform Init
-    run: terraform init
-    working-directory: envirionments/dev
-
-  - name: Terraform Apply
-    run: terraform apply -auto-approve tfplan
-    working-directory: envirionments/dev
+      - name: Terraform Apply
+        working-directory: environments/dev
+        run: terraform apply -auto-approve tfplan
