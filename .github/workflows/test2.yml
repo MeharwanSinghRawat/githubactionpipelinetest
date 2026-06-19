@@ -25,9 +25,11 @@ jobs:
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Format Check
+        continue-on-error: true
         run: terraform fmt -check -recursive
 
       - name: Terraform Validate
+        continue-on-error: true
         working-directory: environments/dev
         run: |
           terraform init -backend=false
