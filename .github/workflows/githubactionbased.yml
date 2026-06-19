@@ -5,22 +5,29 @@ on:
      - main
 
 jobs:
-  terraform_install_job:
+  terraforminstallJob:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v7.0.0
 
-      - name: HashiCorp
+      - name: terraform instalation
         uses: hashicorp/setup-terraform@v2.0.3
 
       - name: check terraform version
-        run: terraform version
+        run: terraform --version
+
+      - name: terraform init step
+        run: terraform init
+    
+
+
+
         
-      
-      
-       
+
+
+
 
 
     
