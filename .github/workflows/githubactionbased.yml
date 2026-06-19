@@ -41,24 +41,3 @@ jobs:
         run: terraform plan
         working-directory: envirionments/dev
          
-    
-
-
-
-        
-
-
-
-
-
-    
-
-  
-  
-  
-  
-     
-
-
-
-    
