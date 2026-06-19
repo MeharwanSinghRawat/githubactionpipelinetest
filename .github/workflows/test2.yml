@@ -1,7 +1,6 @@
 name: Terraform Infra Workflow
-
 on:
-  workflow_dispatch:
+  workflow_dispatch: 
 
 permissions:
 id-token: write
@@ -19,7 +18,6 @@ terraform-scanning:
 name: Terraform Scanning
 runs-on: ubuntu-latest
 
-```
 steps:
   - name: Checkout
     uses: actions/checkout@v4
