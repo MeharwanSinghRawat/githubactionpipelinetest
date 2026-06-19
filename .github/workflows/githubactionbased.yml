@@ -3,12 +3,16 @@ on:
  push:
    branches:
      - main
+env:
+  haalchaal: Bhadhiya hu
+  
 jobs:
   scriptJob:
     runs-on: ubuntu-latest
 
     steps:
-      - run: echo "hello Dosto"
+      - name: running a script
+        run: echo "hello Dosto $haalchaal"
   
   
      
