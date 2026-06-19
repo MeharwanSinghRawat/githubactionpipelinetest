@@ -1,18 +1,18 @@
-name: Terraform Workflow
+name: Terraform PR Validation
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
-  
+
 permissions:
   id-token: write
   contents: read
+
 jobs:
-  installjob:
+
+  terraform-lint:
+    name: TFLint Scan
     runs-on: ubuntu-latest
 
     steps:
@@ -22,25 +22,80 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Verify Terraform Installation
-        run: terraform version
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v4
+
+      - name: Initialize TFLint
+        run: tflint --init
+
+      - name: Run TFLint
+        run: tflint --recursive
+        continue-on-error: true
+
+  tfsec-scan:
+    name: TFSEC Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run TFSEC
+        uses: aquasecurity/tfsec-action@v1.0.3
+        continue-on-error: true
+
+  terrascan-scan:
+    name: Terrascan Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run Terrascan
+        uses: tenable/terrascan-action@main
+        continue-on-error: true
+        with:
+          iac_type: terraform
+          iac_version: v14
+          policy_type: azure
+
+  terraform-plan:
+    name: Terraform Validate & Plan
+    runs-on: ubuntu-latest
+
+    needs:
+      - terraform-lint
+      - tfsec-scan
+      - terrascan-scan
+
+    if: always()
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
 
       - name: Terraform Init
         run: terraform init
         working-directory: envirionments/dev
-        
+
       - name: Azure Login
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-            
 
       - name: Terraform Validate
         run: terraform validate
         working-directory: envirionments/dev
 
       - name: Terraform Plan
-        run: terraform plan
+        run: terraform plan -no-color
         working-directory: envirionments/dev
