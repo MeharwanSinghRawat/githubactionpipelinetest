@@ -21,6 +21,11 @@ jobs:
       - name: terraform init step
         run: terraform init
         working-directory: envirionments/dev
+
+       - name: terraform plan task
+         run: terraform plan
+         working-directory: envirionments/dev
+         
     
 
 
