@@ -3,16 +3,21 @@ on:
  push:
    branches:
      - main
-env:
-  haalchaal: Bhadhiya hu
-  
+
 jobs:
-  scriptJob:
+  terraform_install_job:
     runs-on: ubuntu-latest
 
-    steps:
-      - name: running a script
-        run: echo "hello Dosto $haalchaal"
+   steps:
+     -name: Checkout
+      uses: actions/checkout@v7.0.0
+      
+
+
+    
+
+  
+  
   
   
      
